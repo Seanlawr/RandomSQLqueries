@@ -1,0 +1,63 @@
+Norwegian Alpine Skiers
+
+ESPN Hard
+General Practice ID 9955
+
+Description:
+
+Find all Norwegian alpine skiers who participated in 1992 but didn't participate in 1994. Output unique athlete names.
+
+olympics_athletes_events
+
+id:         int64
+name:       object
+sex:        object
+age:        float64
+height:     float64
+weight:     datetime64[ns]
+team:       object
+noc:        object
+games:      object
+year:       int64
+season:     object
+city:       object
+sport:      object
+event:      object
+medal:      object
+non_team:   datetime64[ns]
+
+Solution:
+
+# Import your libraries
+import pandas as pd
+
+# Start writing code
+df = olympics_athletes_events
+df = df.loc[df['noc'] == 'NOR'] # only Norway skiiers
+
+#make two dataframes, one for each year, and then left out join them
+df1 = df.loc[df['year'] == 1992]
+df2 = df.loc[df['year'] == 1994]
+df_final = pd.merge(df1, df2, on=['name','name'], how="outer", indicator=True)
+df_final = df_final[df_final['_merge'] == 'left_only']
+
+# Drop all duplicate entries, just in case
+df_final = df_final.drop_duplicates(subset=['id_x'])
+
+# and print out the list of names
+df_final['name']
+
+Output:
+
+name
+Ole Kristian Furuseth
+Astrid Ldemel
+Kjetil Andr Aamodt
+Didrik Marksten
+
+Discussion:
+
+The difficulty for me here was finding the syntax required for a left outer join. 
+I wanted to keep everything that was in the 1992 dataframe but NOT the 1994 dataframe.
+adding the "Indicator=True" tag in the merge adds an extra column indicating how that entry was included in the merge. the line right below
+only keeps the ones that were left outer joined.
