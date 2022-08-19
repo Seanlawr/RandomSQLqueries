@@ -1,0 +1,49 @@
+Customer Revenue In March
+
+Interview Question Date: July 2018
+
+Meta/Facebook Medium  Interview Questions ID 9782
+
+Description:
+
+Calculate the total revenue from each customer in March 2019. Include only customers who were active in March 2019.
+Output the revenue along with the customer id and sort the results based on the revenue in descending order.
+
+orders
+
+id:                 int
+cust_id:            int
+order_date:         datetime
+order_details:      varchar
+total_order_cost:   int
+
+Solution:
+
+-- WHERE dates >= '20190301'
+-- AND dates < '20190401'
+-- sum up total order cost
+-- group by cust_id
+
+with CTE as (select * 
+from orders
+WHERE order_date >= '2019-03-01'
+AND order_date < '2019-04-01')
+
+select cust_id, sum(total_order_cost) as revenue
+from CTE
+group by cust_id
+order by revenue desc;
+
+Output: 
+Output
+
+cust_id	revenue
+3	      210
+15	    150
+7	      80
+12	    20
+
+Discussion: 
+
+This query required making a CTE to filter only entries between the two required dates. I used AND to specify the two dates, but probably could have made use of a
+BETWEEN statement to simplify the code.
