@@ -1,0 +1,51 @@
+Largest Olympics
+
+ESPN Medium
+General Practice ID 9942
+
+Description:
+
+Find the Olympics with the highest number of athletes. The Olympics game is a combination of the year and the season, and is found in the 'games' column. 
+Output the Olympics along with the corresponding number of athletes.
+
+olympics_athletes_events
+
+id:         int
+name:       varchar
+sex:        varchar
+age:        float
+height:     float
+weight:     datetime
+team:       varchar
+noc:        varchar
+games:      varchar
+year:       int
+season:     varchar
+city:       varchar
+sport:      varchar
+event:      varchar
+medal:      varchar
+non_team:   datetime
+
+Solution:
+
+-- only need "games" column
+-- return gmaes, count(games), grouped by games
+
+select games,count(distinct id) as num_athletes
+from olympics_athletes_events
+group by games
+order by num_athletes desc
+limit 1
+;
+
+Output: 
+
+games	      num_athletes
+1924 Summer	118
+
+Discussion:
+
+A solution to the "highest number" or "maximum in column" problem is to use a limit at the end of the query. You can run into problems when you have multiple
+entries that have the same value, like if there had been multiple olympic games with 118 athletes. If thats the case, you might think of using a dense_rank()
+function and taking all with highest rank.
