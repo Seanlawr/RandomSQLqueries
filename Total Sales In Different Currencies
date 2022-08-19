@@ -1,0 +1,58 @@
+Total Sales In Different Currencies
+
+
+Interview Question Date: May 2021
+
+Salesforce  Medium  Active Interview  ID 2041
+
+Description:
+
+You work for a multinational company that wants to calculate total sales across all their countries they do business in.
+You have 2 tables, one is a record of sales for all countries and currencies the company deals with, and the other holds currency exchange rate information.
+Calculate the total sales, per quarter, for the first 2 quarters in 2020, and report the sales in USD currency.
+
+sf_exchange_rate
+
+source_currency:  varchar
+target_currency:  varchar
+exchange_rate:    float
+date:             datetime
+
+sf_sales_amount
+
+sales_date:        datetime
+sales_amount:      int
+currency:          varchar
+
+My Solution:
+
+-- Join both tables on the date and source currency, filter only first two quarters
+-- calculate each sale in USD
+-- add a "quarter" column with what quarter the date is in.
+-- Group by quarter
+
+with CTE as (select exch.source_currency, exch.target_currency, exch.exchange_rate, exch.date, sale.sales_amount, round(sale.sales_amount*exch.exchange_rate, 2) as USD_sales, 
+    CASE
+    WHEN exch.date < '2020-04-01' THEN '1'
+    ELSE '2'
+  END AS quarter
+from sf_exchange_rate exch
+join sf_sales_amount sale
+on exch.date = sale.sales_date and exch.source_currency = sale.currency
+where exch.date < '2020-07-01')
+
+select quarter, sum(USD_sales) as sales
+from CTE
+group by quarter;
+
+Output
+
+quarter	sales
+1	      553037.52
+2	      1120846.51
+
+Discussion:
+
+This problem did not feel like a medium difficulty problem. it involved Joining a table on two seperate columns to guarentee keeping unique rows,
+a case statement to create a quarter column, fitering for dates earlier than july, all of that wrapped into a CTE. My biggest difficulty here was
+figuring out a way to join the tables together when there wasn't an obvious column like "ID" to join on.
