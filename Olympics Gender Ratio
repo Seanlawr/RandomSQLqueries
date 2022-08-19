@@ -1,0 +1,73 @@
+Olympics Gender Ratio
+
+ESPN Hard
+General Practice ID 9953
+
+Description:
+
+Find the gender ratio between the number of men and women who participated in each Olympics.
+Output the Olympics name along with the corresponding number of men, women, and the gender ratio. If there are Olympics with no women, output a NULL instead of a ratio.
+
+olympics_athletes_events
+
+id:int
+name:       varchar
+sex:        varchar
+age:        float
+height:     float
+weight:     datetime
+team:       varchar
+noc:        varchar
+games:      varchar
+year:       int
+season:     varchar
+city:       varchar
+sport:      varchar
+event:      varchar
+medal:      varchar
+non_team:   datetime
+
+Solution:
+
+-- need games, sex
+-- pull out name of games and sex of participant
+-- count the number of men and women (Case statement)
+-- calculate ratio
+
+with CTE as (select games, 
+        sum(CASE 
+            WHEN sex = 'M' THEN 1
+            ELSE 0
+            END) AS Males,
+        sum(CASE 
+            WHEN sex = 'F' THEN 1
+            ELSE 0
+            END) AS Females
+from olympics_athletes_events
+group by games)
+select *, round(Case when Females = 0 then 'NULL' ELSE (Males/Females) end, 2) as Gender_Ratio
+from CTE;
+
+Output:
+ 
+games	      Males	Females	Gender_Ratio
+1924 Summer	115	   7	    16.43
+1904 Summer	36	   3	    12
+1908 Summer	72	   2	    36
+1900 Summer	40	   2	    20
+1992 Winter	4	     3	    1.33
+1988 Winter	0	     2	    0
+1994 Winter	2	     5	    0.4
+2012 Summer	1	     1	    1
+1936 Summer	0	     4	    0
+2016 Summer	28	   22	    1.27
+2008 Summer	1	     1	    1
+1996 Summer	1	     0	    0
+1984 Summer	1	     0	    0
+2004 Summer	0	     1	    0
+
+Discussion:
+
+Needed to make a CTE that counted the number of males and females in each games. SQL queries tend to be easier to write when everyhting is located
+in the same table all together. The next issue was that if there were no women at the games, then the diviion in the outer query would divide by 0.
+so we need to include another case statement that just makes that case null.
