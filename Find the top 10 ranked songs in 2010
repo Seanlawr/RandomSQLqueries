@@ -1,0 +1,49 @@
+Find the top 10 ranked songs in 2010
+
+Spotify Medium
+General Practice ID 9650
+
+Description:
+
+What were the top 10 ranked songs in 2010?
+Output the rank, group name, and song name but do not show the same song twice.
+Sort the result based on the year_rank in ascending order.
+
+billboard_top_100_year_end
+
+year:       int
+year_rank:  int
+group_name: varchar
+artist:     varchar
+song_name:  varchar
+id:         int
+
+Solution:
+
+-- filter out none 2010 songs
+-- drop the duplicates (unique song name)
+-- order by year_rank ascending
+
+select distinct song_name, year_rank, group_name
+from billboard_top_100_year_end 
+where year = '2010' and year_rank<=10
+order by year_rank
+
+Output:
+
+song_name	              year_rank	    group_name
+TiK ToK	                 1	            KE$HA
+Need You Now	           2	            LADY ANTEBELLUM
+Hey, Soul Sister	       3	            TRAIN
+California Gurls	       4	            KATY PERRY FEAT. SNOOP DOGG
+OMG	                     5	            USHER FEAT. WILL.I.AM
+Airplanes	               6	            B.O.B FEAT. HAYLEY WILLIAMS
+Love The Way You Lie	   7	            EMINEM FEAT. RIHANNA
+Bad Romance	             8	            LADY GAGA
+Dynamite	               9	            TAIO CRUZ
+Break Your Heart	       10	            TAIO CRUZ FEAT. LUDACRIS
+
+Discussion:
+
+A difficulty I have with SQL is overcomplicating  queries when I don't need to. This query took a while to figure out because I kept trying to
+write subqueries and CTEs when I didn't need to.
