@@ -1,0 +1,70 @@
+Distance Per Dollar
+
+Interview Question Date: November 2020
+
+Uber  Hard
+Interview Questions ID 10302
+
+Description:
+
+You’re given a dataset of uber rides with the traveling distance (‘distance_to_travel’) and cost (‘monetary_cost’) for each ride. 
+For each date, find the difference between the distance-per-dollar for that date and the average distance-per-dollar for that year-month. 
+Distance-per-dollar is defined as the distance traveled divided by the cost of the ride.
+
+The output should include the year-month (YYYY-MM) and the absolute average difference in distance-per-dollar (Absolute value to be rounded to the 2nd decimal).
+You should also count both success and failed request_status as the distance and cost values are populated for all ride requests. 
+Also, assume that all dates are unique in the dataset. Order your results by earliest request date first.
+
+uber_request_logs
+
+request_id:                 int
+request_date:               datetime
+request_status:             varchar
+distance_to_travel:         float
+monetary_cost:              float
+driver_to_client_distance:  float
+
+Solution:
+
+-- find distance per dollar
+-- find avergae DPD for each year-month
+-- return DPD - average(DPD)
+with DPD_table as (
+select request_date, distance_to_travel, monetary_cost, round((distance_to_travel)/(monetary_cost),2) as DPD 
+from uber_request_logs),
+
+DPD_AVG as (select *, AVG(DPD) OVER (partition by MONTH(request_date)) as Avg_DPD
+from DPD_table)
+
+select request_date, ABS(Avg_DPD - DPD) as difference
+from DPD_AVG;
+
+Output: 
+
+request_date	difference
+2020-01-09	  3.32
+2020-01-24	  3.32
+2020-02-08	  1.58
+2020-02-23	  1.58
+2020-03-09	  3.13
+2020-03-24	  3.13
+2020-04-08	  1.19
+2020-04-23	  1.19
+2020-05-08	  6.44
+2020-05-23	  6.44
+2020-06-07	  4.97
+2020-06-22	  4.97
+2020-07-07	  2.025
+2020-07-22	  2.025
+2020-08-06	  11.615
+2020-08-21	  11.615
+2020-09-05	  1.82
+2020-09-20	  1.82
+2020-10-05	  0.465
+2020-10-20	  0.465
+
+Discussion: 
+
+There was probably a simpler way to perform this query than my approach, which required to different CTEs. The first one calculates dollars per distance,
+and the second calculates the average using a window function partitioning over each month. In my experience, SQL is much more simple if everything you need for your
+query is located in the same table, so the main goal of making the two CTEs was to achieve this. 
