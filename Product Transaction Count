@@ -1,0 +1,65 @@
+Product Transaction Count
+
+Microsoft Medium
+General Practice ID 10163
+
+Description:
+
+Find the number of transactions that occurred for each product. 
+Output the product name along with the corresponding number of transactions and order records by the product id in ascending order. 
+You can ignore products without transactions.
+
+excel_sql_inventory_data
+
+product_id:         int
+product_name:       varchar
+product_type:       varchar
+unit:               varchar
+price_unit:         float
+wholesale:          float
+current_inventory:  int
+
+excel_sql_transaction_data
+
+transaction_id: int
+time:           datetime
+product_id:     int
+
+Solution:
+
+-- right join tables on product_id
+-- count all and group by name.
+-- order by product_id
+
+with CTE as (select inv.product_id, inv.product_name, count(*) as number_of_transactions 
+from excel_sql_inventory_data inv
+right join excel_sql_transaction_data tra
+on inv.product_id = tra.product_id
+group by 1,2
+order by inv.product_id)
+select product_name, number_of_transactions
+from CTE;
+
+Output:
+
+product_name	              number_of_transactions
+strawberry	                5
+apple_fuji	                9
+orange	                    6
+clementines	                6
+blood_lime	                5
+tayberry	                  6
+pluot	                      8
+tangelo	                    9
+pomello	                    6
+pineberry	                  10
+vegan_egg_substitute	      10
+falafel_chips   	          7
+sweet_potato_hockey_pucks	  9
+
+Discussion:
+
+Not too difficult of a query here. The interesting bit was that we could ignore products that didn't have a transaction, which meant we needed everything from the
+right table, and only matching items from the left table. We get to demonstrate use of the rarely applied right join!
+Additionally, after we do that and only keep relevant columns, we have to order by product_id. But that id isn't asked for in the final solution, so we need to
+make another query to get rid of it. We make a CTE and only pull out product_name and number_of_transactions, finishing up the query.
