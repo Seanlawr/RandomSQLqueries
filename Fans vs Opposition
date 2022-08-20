@@ -1,0 +1,68 @@
+Fans vs Opposition
+
+Interview Question Date: March 2020
+Meta/Facebook Hard
+Interview Questions ID 10062
+
+Description:
+
+Meta/Facebook is quite keen on pushing their new programming language Hack to all their offices. 
+They ran a survey to quantify the popularity of the language and send it to their employees. 
+To promote Hack they have decided to pair developers which love Hack with the ones who hate it so the fans can convert the opposition. 
+Their pair criteria is to match the biggest fan with biggest opposition, second biggest fan with second biggest opposition, and so on. 
+Write a query which returns this pairing. Output employee ids of paired employees. Sort users with the same popularity value by id in ascending order.
+
+Duplicates in pairings can be left in the solution. For example, (2, 3) and (3, 2) should both be in the solution.
+
+facebook_hack_survey
+
+employee_id:  int
+age:          int
+gender:       varchar
+popularity:   int
+
+Solution:
+
+-- Create two temp tables, one with rank going up, one going down.
+-- Join both temp tables on popularity
+-- return the two employee ids
+
+with unpop as (select employee_id, popularity, row_number() over (order by popularity asc) as rnk
+from facebook_hack_survey),
+
+pop as (select employee_id, popularity, (18 - rnk )  as new_rnk
+from unpop
+group by 1,2)
+
+select u.employee_id as emp_1, p.employee_id as emp2
+from unpop u
+join pop p on u.rnk = p.new_rnk;
+
+Output:
+
+emp_1	emp2
+2	    17
+13	  8
+10	  5
+12	  9
+1	    6
+11	  3
+7	    55
+66	  4
+0   	0
+4	    66
+55	  7
+3	    11
+6	    1
+9	    12
+5	    10
+8	    13
+17	  2
+
+Discussion:
+
+The idea for this query was sound: rank the table twice, one from least to most popular, and one the other way around. Then just join the two tables 
+on the rank and we should get the pairs we want. I ran into a problem that I couldn't elegantly solve. I kept getting a BIGDIGIT error when trying to 
+reverse the rank. I ended up having to hardcode in the number of employees at 17 + 1 to mae it work. Everything else is independant of the provided
+data size, except that. count(*) + 1 - rnk kept throwing errors. Should return later to fix.
+
