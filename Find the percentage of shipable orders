@@ -1,0 +1,50 @@
+Find the percentage of shipable orders
+
+Amazon Hard
+General Practice ID 10090
+
+Description:
+
+Find the percentage of shipable orders.
+Consider an order is shipable if the customer's address is known.
+
+orders
+
+id:               int
+cust_id:          int
+order_date:       datetime
+order_details:    varchar
+total_order_cost: int
+
+customers
+
+id:           int
+first_name:   varchar
+last_name:    varchar
+city:         varchar
+address:      varchar
+phone_number: varchar
+
+Solution:
+
+-- Join tables on id, need id and shipping address
+-- case when address is null 0 else 1 in a new column
+-- sum up new column divided by count(*) * 100
+
+with CTE as (select o.cust_id, c.address, 
+    case when c.address is null then 0 else 1 end as add_avail
+from orders o
+join customers c on o.cust_id = c.id)
+
+select sum(add_avail)/count(*)*100 as avail_perc
+from CTE;
+
+Output:
+
+avail_perc
+28
+
+Discussion: 
+
+This problem needed a clever addition of a new column, which was 1 if the address was known and 0 otherwise. We could then use it to calculate out percentage,
+by having the numerator be the sum of the rows that had an address. With this idea, the query actually became quite trivial with a CTE.
