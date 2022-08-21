@@ -1,0 +1,55 @@
+Problem Description:
+
+Find quarterbacks with the most interceptions in 2016. Output the quarterbacks along with the corresponding number of interceptions. 
+Sort records by the interceptions in descending order.
+
+qbstats_2015_2016
+
+qb:           varchar
+att:          int
+cmp:          int
+yds:          int
+ypa:          float
+td:           int
+int:          int
+lg:           varchar
+sack:         int
+loss:         int
+rate:         float
+game_points:  int
+home_away:    varchar
+year:         int
+
+Discussion: The problme here is that one of the columns we need to use to answer this problem, the "int" column, is named the same as one of the reserved words
+in MySQL, "int". So when we try to select that column, MySQL throws an error. We can get around this in the query by putting backticks around the word "int, as
+in the solution. The better way to get around this is to not name your columns these sorts of things.
+
+Solution:
+
+select qb, sum(`int`) as total_ints
+from qbstats_2015_2016
+where year = 2016
+group by qb
+order by total_ints desc;
+
+Output:
+
+qb	                                  total_ints
+Philip RiversP. Rivers	              21
+Drew BreesD. Brees	                  15
+Joe FlaccoJ. Flacco	                  15
+Carson PalmerC. Palmer	              14
+Ben RoethlisbergerB. Roethlisberger	  13
+Cam NewtonC. Newton	                  13
+Marcus MariotaM. Mariota	            9
+Matt RyanM. Ryan	                    7
+Aaron RodgersA. Rodgers   	          7
+Tyrod TaylorT. Taylor	                6
+Dak PrescottD. Prescott	              4
+Tom BradyT. Brady	                    2
+Jimmy GaroppoloJ. Garoppolo	          0
+Drew StantonD. Stanton	              0
+
+Discussion P.S.:
+
+Don't have your name column data like this either, it's a pain in the butt to parse through.
