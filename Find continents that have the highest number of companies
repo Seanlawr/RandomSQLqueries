@@ -1,0 +1,50 @@
+Find continents that have the highest number of companies
+
+Forbes Medium
+General Practice ID 9804
+
+Description:
+
+Find continents that have the highest number of companies.
+Output the continents along with the corresponding number of companies.
+
+forbes_global_2010_2014
+
+company:        varchar
+sector:         varchar
+industry:       varchar
+continent:      varchar
+country:        varchar
+marketvalue:    float
+sales:          float
+profits:        float
+assets:         float
+rank:           int
+forbeswebpage:  varchar
+
+Solution:
+
+-- Select only company, continent from table, then count companies over each continent. Use this as CTE
+-- get maximum count out of our CTE
+-- Use this as subquery to only return maximum companies. Use distinct to only return one.
+
+with CTE as (select company, continent, count(company) over (partition by continent) as number_of_companies
+from forbes_global_2010_2014
+group by 2,1
+order by continent)
+
+select distinct continent, number_of_companies
+from CTE
+where number_of_companies = (select max(number_of_companies)
+                                from CTE);
+
+Output: 
+
+continent	      number_of_companies
+North America	  40
+
+Discussion:
+
+This problem involved a little bit of everything. We needed to make a CTE to filter out only the columns we needed to use. We used a window function to
+partition the count by continent. Then we pulled out the maximum using a subquery so we could only keep entries that matched that maximum. This is a 
+great example to show off everything SQL queries can make use of to simplify pulling data out of tables.
