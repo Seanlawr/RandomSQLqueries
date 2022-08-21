@@ -1,10 +1,10 @@
-Comments Distribution
+# Comments Distribution
 
 Interview Question Date: November 2020
 Meta/Facebook Hard
 Interview Questions ID 10297
 
-Description:
+# Description:
 
 Write a query to calculate the distribution of comments by the count of users that joined Meta/Facebook between 2018 and 2020, for the month of January 2020.
 
@@ -29,7 +29,7 @@ user_id:    int
 body:       varchar
 created_at: datetime
 
-Solution:
+# Solution:
 
 -- Join both tables on id = user_id
 -- filter by joined_at between 2018 and 2020, comments in month of january 2020, user post later than joined date
@@ -52,7 +52,7 @@ from CTE2
 group by count_of
 order by count_of asc
 
-Output: 
+# Output: 
 number_of_comments	number_of_people
 1	                  3
 2	                  3
@@ -61,7 +61,7 @@ number_of_comments	number_of_people
 5	                  1
 6	                  1
 
-Discussion: 
+# Discussion: 
 
 This was a very interesting problem. The join was straightforward since we had the same ID in each. The restrictions were fine, we just had to do each individually.
 We made good use of the BETWEEN function for dates.
