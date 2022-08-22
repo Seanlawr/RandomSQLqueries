@@ -1,0 +1,46 @@
+First Day Retention Rate (Python 3)
+
+Interview Question Date: January 2022
+
+Amazon Medium
+Active Interview ID 2090
+
+Description:
+
+Calculate the first-day retention rate of a group of video game players. The first-day retention occurs when a player logs in 1 day after their first-ever log-in.
+Return the proportion of players who meet this definition divided by the total number of players.
+
+players_logins
+
+player_id:  int64
+login_date: datetime64[ns]
+
+Solution:
+
+# Import your libraries
+import pandas as pd
+
+# Idea: make a new column with the last login time, then keep only the first two rows for each id. This will isolate the first and second login,
+# which is all we need to look at to determine if someone logged in 1 day after their frist time. Implement a shift function.
+
+players_logins['last_login'] = players_logins.groupby(['player_id'])['login_date'].shift(1)
+df = players_logins.groupby('player_id').head(2)
+
+# Now we take teh difference in days of the two logins, and only keep the ones that are 1 day apart.
+
+df['datediff'] = (df['login_date'] - df['last_login']).dt.days
+df = df[df['datediff']==1]
+
+# Now take the ratio of the players we have left after filtering, and the total number of unique players.
+
+df['player_id'].count()/players_logins['player_id'].nunique()
+
+Output:
+
+0.333
+
+Discussion:
+
+This was a good problem to demonstrate the use case of a shift function. When comparing two values that are one row off from each other, a shift function
+(or a lag function if using SQL) is a good tool for the job. This also required us to keep our dataframes seperate for the final calculation, which
+requires us to be very organized with our dataframes and know exactly what data is in which frame.
